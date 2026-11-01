@@ -689,8 +689,6 @@ WMARK_HIGH = 82.5MB * 1.5 = 123.75MB
 
 如果内核将所有可选内存区域中的所有可回收页面全部回收之后，仍然无法满足内存的分配，那么放弃重试执行后续 OOM。
 
-![__alloc_pages](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/__alloc_pages.png)
-
 - [深入理解 Linux 物理内存分配全链路实现](https://mp.weixin.qq.com/s/llZXDRG99NUXoMyIAf00ig)
 - [Overcommitting Memory （过度使用内存）](https://blog.csdn.net/zyqash/article/details/122860393)
 - [内存不足：OOM](https://zhangzhuo.ltd/articles/2021/08/10/1628565705959.html)

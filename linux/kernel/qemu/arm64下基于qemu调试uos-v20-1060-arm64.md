@@ -7,7 +7,7 @@ sudo apt-get install qemu qemu-system-arm qemu-efi qemu-efi-aarch64 virtinst vir
 ```
 
 <!-- ![qemu-system-aarch64](images/qemu-system-aarch64.png) -->
-![qemu-system-aarch64](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/qemu-system-aarch64.png)
+![qemu-system-aarch64](images/qemu-system-aarch64.png)
 
 ## 制作启动盘
 
@@ -143,7 +143,7 @@ git clone "ssh://ut004487@gerrit.uniontech.com:29418/kernel/arm-kernel" && scp -
 git checkout -b develop/need_merge need_merge
 ```
 
-内核编译选项配置参考：[内核编译选项配置](https://github.com/realwujing/linux-learning/blob/main/debug/kernel/qemu/%E5%9F%BA%E4%BA%8Eqemu%20tap(NAT%E7%BD%91%E7%BB%9C)%E3%80%81debootstrap%20%E8%B0%83%E8%AF%95%E5%86%85%E6%A0%B8%E3%80%81%E6%A0%B9%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F.md#%E5%86%85%E6%A0%B8%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9%E9%85%8D%E7%BD%AE)
+内核编译选项配置参考：[内核编译选项配置](amd64下交叉编译调试arm64内核.md#内核编译选项配置)
 
 内核编译完成后启动虚拟机：
 

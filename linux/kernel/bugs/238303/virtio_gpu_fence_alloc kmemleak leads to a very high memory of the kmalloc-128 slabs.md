@@ -20,19 +20,12 @@
           100 /usr/lib/dpkg-db/status
   ```
 
-![host](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/截图_选择区域_20240126141611.png)
-
 ### 虚拟机
 
 - cpu: kvm
 - os: [uos20-1060-arm64](https://cdimage.uniontech.com/iso-v20/desktop-professional/1060/uos-desktop-20-professional-1060-arm64.iso)
 
-![guest-spice](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/截图_选择区域_20240126141808.png)
-![guest-virtio](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/截图_选择区域_20240126141820.png)
-
 #### 虚拟机初始化报错
-
-![Failed to create /var/lib/libvirt/.cache for shader cache (Permission denied)](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/截图_选择区域_20240126115617.png)
 
 ```text
 无法完成安装：'internal error: process exited while connecting to monitor: Failed to create /var/lib/libvirt/.cache for shader cache (Permission denied)---disabling.'
@@ -551,7 +544,5 @@ Date:   Mon Nov 12 17:51:54 2018 +0100
 `virtio_gpu_fence_alloc`首次出现在内核4.20版本中，应该是往下迁移的。
 
 ## 修复方案
-
-![dma_fence_put](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/dma_fence_put.png)
 
 - [[v4] dma-buf: Rename struct fence to dma_fence](https://patchwork.freedesktop.org/patch/118020/)

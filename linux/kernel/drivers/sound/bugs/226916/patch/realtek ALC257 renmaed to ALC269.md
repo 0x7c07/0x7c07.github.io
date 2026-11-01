@@ -50,9 +50,7 @@ ALC257_FIXUP_FT_RENAME 是一个与 "BXC NF271B FT board" 相关的修复或解�
 
 所有的PCI设备都有至少256字节的地址空间，其中前64字节是标准化的，被称为PCI配置寄存器，剩下的字节是设备相关的 (取决于具体的厂商，需要查看datasheet得知)。
 
-PCI配置寄存器如下图所示。
-
-![PCI配置寄存器](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/9178ba2599d6c4bb6c1f0f9a232cf3f3.png)
+PCI配置寄存器的主要字段如下。
 
 - Vendor ID: 标识硬件厂商，需要向特定组织进行注册。
 - Device ID: 由硬件厂商来分配的设备ID，无需对ID进行注册。

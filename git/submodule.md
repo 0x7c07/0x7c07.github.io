@@ -7,13 +7,13 @@
     1. 方式1
 
         ```bash
-        git clone --recurse-submodules https://github.com/realwujing/linux-learning.git
+        git clone --recurse-submodules https://github.com/qemu/qemu.git  # qemu 仓库包含 submodule，仅作示例
         ```
 
     2. 方式2
 
         ```bash
-        git clone https://github.com/realwujing/linux-learning.git
+        git clone https://github.com/qemu/qemu.git  # qemu 仓库包含 submodule，仅作示例
         git submodule update --init --recursive
         ```
 

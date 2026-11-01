@@ -70,7 +70,7 @@
 ```bash
 sudo apt install vim vim-gtk ctags cscope
 git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
-wget -O ~/.vimrc https://raw.githubusercontent.com/realwujing/realwujing.github.io/main/linux/vim/.vimrc
+wget -O ~/.vimrc https://raw.githubusercontent.com/0x7c07/0x7c07.github.io/main/linux/vim/.vimrc
 vim .
 :PluginInstall
 ```

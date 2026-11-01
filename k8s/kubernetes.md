@@ -26,7 +26,7 @@
 
 ## K8s集群安装教程
 
-- [<font color=Red>k8s集群安装教程</font>](https://github.com/realwujing/linux-learning/blob/master/k8s/k8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85%E6%95%99%E7%A8%8B.md)
+- [<font color=Red>k8s集群安装教程</font>](k8s集群部署/k8s集群安装教程.md)
 - [使用kubeadm初始化k8s集群的一些问题解决办法](https://blog.csdn.net/sinat_32582203/article/details/119795858)
 - [【问题解决】[kubelet-check] The HTTP call equal to ‘curl -sSL http://localhost:10248/healthz‘ failed wite](https://blog.csdn.net/qq_43762191/article/details/125567365)
 - [kubeadm初始化异常](https://blog.51cto.com/u_15502785/5167925)
@@ -49,7 +49,7 @@
 - [<font color=Red>Kubernetes Dashboard 生成token</font>](https://blog.csdn.net/zhangkaiadl/article/details/122125364)
 
     ```bash
-    - kubectl-nkubernetes-dashboard get secret $(kubectl-nkubernetes-dashboard getsa/admin-user -ojsonpath="{.secrets[0].name}") -o go-template="{{.data.token| base64decode}}"
+    kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{% raw %}{{.data.token | base64decode}}{% endraw %}"
     ```
 
 ## NotReady

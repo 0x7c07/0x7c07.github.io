@@ -39,9 +39,7 @@
 
 传统的文件系统在磁盘上的布局如下：
 
-![20240328091254](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328091254.png)
-
-由上图可知，文件系统的开头通常是由一个磁盘扇区所组成的引导块，该部分的主要目的是用于对操作系统的引导。一般只在启动操作系统时使用。
+文件系统的开头通常是由一个磁盘扇区所组成的引导块，该部分的主要目的是用于对操作系统的引导。一般只在启动操作系统时使用。
 
 随后是超级块，超级块主要存放了该物理磁盘中文件系统结构的相关信息，并且对各个部分的大小进行说明。
 
@@ -122,9 +120,7 @@ Queuing）和 deadline（限期）。NOOP 调度算法适合闪存类块设备�
 
 #### super_block与物理设备
 
-每个块设备或者块设备的分区都对应有自身的request_queue，从I/O调度器合并和排序出来的请求会被 分发（Dispatch）到设备级的request_queue。图13.3描述了request_queue、request、bio、bio_vec之间的关系。
-
-![图13.3 request_queue、request、bio和bio_vec](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328103243.png)
+每个块设备或者块设备的分区都对应有自身的request_queue，从I/O调度器合并和排序出来的请求会被 分发（Dispatch）到设备级的request_queue。request_queue、request、bio、bio_vec 是块 I/O 层的核心结构：bio 描述一次块 I/O，由若干 bio_vec 组成；request 由一个或多个 bio 合并而成，放入设备的 request_queue 等待下发。
 
 超级块（superblock）与具体的物理设备之间的交互主要通过文件系统驱动程序和底层存储设备驱动程序完成。下面是一些关键的函数，用于超级块与物理设备之间的交互：
 
@@ -230,8 +226,6 @@ static int __init init_ext4_fs(void)
 
 ## 进程调度
 
-![进程调度器](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327204553.png)
-
 内核默认提供了5个调度器，Linux内核使用struct sched_class来对调度器进行抽象：
 
 - Stop调度器， stop_sched_class：优先级最高的调度类，可以抢占其他所有进程，不能被其他进程抢占；
@@ -297,15 +291,11 @@ Stop 调度器是 Linux 内核中的一种调度策略，它可以被用于特�
 
 ### runqueue 运行队列
 
-![runqueue 运行队列](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327204941.png)
-
 - 每个CPU都有一个运行队列，每个调度器都作用于运行队列；
 - 分配给CPU的task，作为调度实体加入到运行队列中；
 - task首次运行时，如果可能，尽量将它加入到父task所在的运行队列中（分配给相同的CPU，缓存affinity会更高，性能会有改善）；
 
 ### task_group 任务分组
-
-![task_group 任务分组](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327205150.png)
 
 - 利用任务分组的机制，可以设置或限制任务组对CPU的利用率，比如将某些任务限制在某个区间内，从而不去影响其他任务的执行效率；
 
@@ -338,14 +328,10 @@ Stop 调度器是 Linux 内核中的一种调度策略，它可以被用于特�
 
 #### 主动调度 - schedule()
 
-![主动调度 - schedule()](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327205356.png)
-
-- schedule()函数，是进程调度的核心函数，大体的流程如上图所示。
+- schedule()函数，是进程调度的核心函数。
 - 核心的逻辑：选择另外一个进程来替换掉当前运行的进程。进程的选择是通过进程所使用的调度器中的pick_next_task函数来实现的，不同的调度器实现的方法不一样；进程的替换是通过context_switch()来完成切换的，具体的细节后续的文章再深入分析。
 
 #### 周期调度 - schedule_tick()
-
-![周期调度 - schedule_tick()](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327205635.png)
 
 - 时钟中断处理程序中，调用schedule_tick()函数；
 - 时钟中断是调度器的脉搏，内核依靠周期性的时钟来处理器CPU的控制权；
@@ -354,14 +340,10 @@ Stop 调度器是 Linux 内核中的一种调度策略，它可以被用于特�
 
 #### 高精度时钟调度 - hrtick()
 
-![高精度时钟调度 - hrtick()](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327205850.png)
-
 - 高精度时钟调度，与周期性调度类似，不同点在于周期调度的精度为ms级别，而高精度调度的精度为ns级别；
 - 高精度时钟调度，需要有对应的硬件支持；
 
 #### 进程唤醒时调度 - wake_up_process()
-
-![进程唤醒时调度 - wake_up_process()](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327210034.png)
 
 - 唤醒进程时调用wake_up_process()函数，被唤醒的进程可能抢占当前的进程；
 
@@ -396,8 +378,6 @@ Stop 调度器是 Linux 内核中的一种调度策略，它可以被用于特�
 
 看看具体哪些函数过程中，设置了TIF_NEED_RESCHED标志吧：
 
-![TIF_NEED_RESCHED标志](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327211940.png)
-
 - 内核提供了set_tsk_need_resched函数来将thread_info中flag字段设置成TIF_NEED_RESCHED；
 - 设置了TIF_NEED_RESCHED标志，表明需要发生抢占调度；
 
@@ -413,17 +393,13 @@ Stop 调度器是 Linux 内核中的一种调度策略，它可以被用于特�
 - 中断处理后返回到用户态；
 - 系统调用后返回到用户态；
 
-![抢占执行点](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327212209.png)
-
 - ARMv8有4个Exception Level，其中用户程序运行在EL0，OS运行在EL1，Hypervisor运行在EL2，Secure monitor运行在EL3；
 - 用户程序在执行过程中，遇到异常或中断后，将会跳到ENTRY(vectors)向量表处开始执行；
 - 返回用户空间时进行标志位判断，设置了TIF_NEED_RESCHED则需要进行调度切换，没有设置该标志，则检查是否有收到信号，有信号未处理的话，还需要进行信号的处理操作；
 
 #### 内核抢占
 
-Linux内核有三种内核抢占模型，先上图：
-
-![Linux内核有三种内核抢占模型](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327212419.png)
+Linux内核有三种内核抢占模型：
 
 - CONFIG_PREEMPT_NONE：不支持抢占，中断退出后，需要等到低优先级任务主动让出CPU才发生抢占切换；
 - CONFIG_PREEMPT_VOLUNTARY：自愿抢占，代码中增加抢占点，在中断退出后遇到抢占点时进行抢占切换；
@@ -435,8 +411,6 @@ Linux内核有三种内核抢占模型，先上图：
 - 抢占触发点的几种情况，在用户抢占中已经分析过，不管是用户抢占还是内核抢占，触发点都是一致的；
 
 ##### 抢占执行点
-
-![抢占执行点](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327212700.png)
 
 总体而言，内核抢占执行点可以归属于两大类：
 
@@ -450,9 +424,7 @@ Linux内核有三种内核抢占模型，先上图：
 - preempt_enable()会将preempt_count值减1，并判断是否需要进行调度，在条件满足时进行切换；
 - preempt_disable()会将preempt_count值加1；
 
-此外，preemt_count字段还用于判断进程处于各类上下文以及开关控制等，如图：
-
-![preempt_count](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327212901.png)
+此外，preemt_count字段还用于判断进程处于各类上下文以及开关控制等。
 
 ### 上下文切换
 
@@ -464,8 +436,6 @@ Linux内核有三种内核抢占模型，先上图：
 
 __schedule()函数调用分析如下：
 
-![__schedule()函数调用分析](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327213320.png)
-
 主要的逻辑：
 
 - 根据CPU获取运行队列，进而得到运行队列当前的task，也就是切换前的prev;
@@ -476,8 +446,6 @@ __schedule()函数调用分析如下：
 #### context_switch()
 
 context_switch()的调用分析如下：
-
-![context_switch()的调用分析](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327213453.png)
 
 核心的逻辑有两部分：
 
@@ -507,9 +475,7 @@ context_switch()的调用分析如下：
 
 一不满足，就不会发生死锁。
 
-![内核互斥技术](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327215739.png)
-
-图中每一种颜色代表一种竞态情况，主要归结为三类：
+竞态情况主要归结为三类：
 
 - 进程与进程之间：单核上的抢占，多核上的SMP；
 - 进程与中断之间：中断又包含了上半部与下半部，中断总是能打断进程的执行流；
@@ -596,13 +562,9 @@ RCU（Read-Copy Update）：
 
 spinlock，就是大家熟知的自旋锁，它的特点是自旋锁保护的区域不允许睡眠，不可以用在中断上下文中。自旋锁获取不到时，CPU会忙等待，并循环测试等待条件。自旋锁一般用于保护很短的临界区。
 
-![20240327215855](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327215855.png)
-
 #### spin_lock/spin_unlock
 
 先看一下函数调用流程：
-
-![spin_lock/spin_unlock](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327220058.png)
 
 - spin_lock操作中，关闭了抢占，也就是其他进程无法再来抢占当前进程了；
 - spin_lock函数中，关键逻辑需要依赖于体系结构的实现，也就是arch_spin_lock函数；
@@ -630,16 +592,12 @@ spinlock的核心思想是基于tickets的机制：
 自旋锁还有另外两种形式，那就是在持有锁的时候，不仅仅关掉抢占，还会把本地的中断关掉，或者把下半部关掉（本质上是把软中断关掉）。
 这种锁用来保护临界资源既会被进程访问，也会被中断访问的情况。
 
-看一下调用流程图：
-
-![spin_lock_irq/spin_lock_bh](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327220903.png)
+这两个函数的调用流程如下：
 
 - 可以看到这两个函数中，实际锁的机制实现跟spin_lock是一样的；
 - 额外提一句，spin_lock_irq还有一种变种形式spin_lock_irqsave，该函数会将当前处理器的硬件中断状态保存下来；
 
-__local_bh_disable_ip是怎么实现的呢，貌似也没有看到关抢占？有必要前情回顾一下了，如果看过之前的文章的朋友，应该见过下边这张图片：
-
-![__local_bh_disable_ip](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327221126.png)
+__local_bh_disable_ip是怎么实现的呢，貌似也没有看到关抢占？有必要前情回顾一下了，如果看过之前的文章的朋友，应该记得 preempt_count 的作用：
 
 - thread_info->preempt_count值就维护了各种状态，针对该值的加减操作，就可以进行状态的控制；
 
@@ -650,9 +608,7 @@ __local_bh_disable_ip是怎么实现的呢，貌似也没有看到关抢占？�
 - 读者与写者互斥；
 - 写者与写者互斥；
 
-先看流程分析图：
-
-![rwlock读写锁](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327221321.png)
+读写锁的实现流程如下：
 
 - 读写锁数据结构arch_rwlock_t中只维护了一个字段：volatile unsigned int lock，其中bit[31]用于写锁的标记，bit[30:0]用于读锁的统计；
 - 读者在获取读锁的时候，高位bit[31]如果为1，表明正有写者在访问临界区，这时候会进入自旋的状态，如果没有写者访问，那么直接去自加rw->lock的值，从逻辑中可以看出，是支持多个读者同时访问的；
@@ -667,9 +623,7 @@ __local_bh_disable_ip是怎么实现的呢，貌似也没有看到关抢占？�
 
 - 顺序锁也区分读者与写者，它的优点是不会把写者给饿死。
 
-来看一下流程图：
-
-![seqlock顺序锁](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327232150.png)
+顺序锁的读写流程如下：
 
 - 顺序锁的读锁有三种形式：
   - 无加锁访问，读者在读临界区之前，先读取序列号，退出临界区操作后再读取序列号进行比较，如果发现不相等，说明被写者更新内容了，需要重新再读取临界区，所以这种情况下可能给读者带来的开销会大一些；
@@ -677,7 +631,7 @@ __local_bh_disable_ip是怎么实现的呢，貌似也没有看到关抢占？�
   - 在形式1和形式2中动态选择，如果有写者在写临界区，读者化身为自旋锁，没有写者在写临界区，则化身为顺序无锁访问；
 - 顺序锁的写锁，只有一种形式，本质上是用自旋锁来保护临界区，然后再把序号值自加处理；
 - 顺序锁也有一些局限的地方，比如采用读者的形式1的话，临界区中存在地址（指针）操作，如果写者把地址进行了修改，那就可能造成访问错误了；
-- 说明一下流程图中的smp_rmb/smp_wmb，这两个函数是内存屏障操作，作用是告诉编译器内存中的值已经改变，之前对内存的缓存（缓存到寄存器）都需要抛弃，屏障之后的内存操作需要重新从内存load，而不能使用之前寄存器缓存的值，内存屏障就像是代码中一道不可逾越的屏障，屏障之前的load/store指令不能跑到屏障的后边，同理，后边的也不能跑到前边；
+- 说明一下顺序锁实现中的smp_rmb/smp_wmb，这两个函数是内存屏障操作，作用是告诉编译器内存中的值已经改变，之前对内存的缓存（缓存到寄存器）都需要抛弃，屏障之后的内存操作需要重新从内存load，而不能使用之前寄存器缓存的值，内存屏障就像是代码中一道不可逾越的屏障，屏障之前的load/store指令不能跑到屏障的后边，同理，后边的也不能跑到前边；
 
 - 顺序锁也同样存在关中断和关下半部的形式，原理基本都是一致的，不再啰嗦了。
 
@@ -701,11 +655,9 @@ RCU, Read-Copy-Update，是Linux内核中的一种同步机制。RCU常被描述
 - 写者的同步开销比较大，写者之间需要互斥处理；
 - 使用上比其他同步机制复杂；
 
-![RCU原理](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327233032.png)
-
 - 多个读者可以并发访问临界资源，同时使用rcu_read_lock/rcu_read_unlock来标定临界区；
 - 写者(updater)在更新临界资源的时候，拷贝一份副本作为基础进行修改，当所有读者离开临界区后，把指向旧临界资源的指针指向更新后的副本，并对旧资源进行回收处理；
-- 图中只显示一个写者，当存在多个写者的时候，需要在写者之间进行互斥处理；
+- 上面描述的是单个写者的场景，当存在多个写者的时候，需要在写者之间进行互斥处理；
 
 上述的描述比较简单，RCU的实现很复杂。本文先对RCU来一个初印象，并结合接口进行实例分析，后续文章再逐层深入到背后的实现原理。开始吧！
 
@@ -713,9 +665,7 @@ RCU, Read-Copy-Update，是Linux内核中的一种同步机制。RCU常被描述
 
 RCU的基本思想是将更新Update操作分为两个部分：1）Removal移除；2）Reclamation回收。直白点来理解就是，临界资源被多个读者读取，写者在拷贝副本修改后进行更新时，第一步需要先把旧的临界资源数据移除（修改指针指向），第二步需要把旧的数据进行回收（比如kfree）。
 
-因此，从功能上分为以下三个基本的要素：Reader/Updater/Reclaimer，三者之间的交互如下图：
-
-![RCU基本要素](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327233252.png)
+因此，从功能上分为以下三个基本的要素：Reader/Updater/Reclaimer，三者之间的交互关系如下：
 
 Reader
 
@@ -736,20 +686,14 @@ Reclaimer
 
 ##### Grace Period
 
-- 中间的黄色部分代表的就是Grace Period，中文叫做宽限期，从Removal到Reclamation，中间就隔了一个宽限期；
+- Grace Period（中文叫做宽限期）指的是从Removal到Reclamation之间的这段时间；
 - 只有当宽限期结束后，才会触发回收的工作，宽限期的结束代表着Reader都已经退出了临界区，因此回收工作也就是安全的操作了；
 - 宽限期是否结束，与处理器的执行状态检测有关，也就是检测静止状态Quiescent Status；
 - RCU的性能与可扩展性依赖于它是否能有效的检测出静止状态(Quiescent Status)，并且判断宽限期是否结束。
 
-来一张图：
-
-![Grace Period](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327234922.png)
-
 ##### Quiescent Status
 
 Quiescent Status，用于描述处理器的执行状态。当某个CPU正在访问RCU保护的临界区时，认为是活动的状态，而当它离开了临界区后，则认为它是静止的状态。当所有的CPU都至少经历过一次QS后，宽限期将结束并触发回收工作。
-
-![Quiescent Status](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327235031.png)
 
 - 在时钟tick中检测CPU处于用户模式或者idle模式，则表明CPU离开了临界区；
 - 在不支持抢占的RCU实现中，检测到CPU有context切换，就能表明CPU离开了临界区；
@@ -758,9 +702,7 @@ Quiescent Status，用于描述处理器的执行状态。当某个CPU正在访�
 
 ##### Publish-Subscribe Mechanism
 
-订阅机制是个什么概念，来张图：
-
-![Publish-Subscribe Mechanism](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327233637.png)
+订阅机制的概念如下：
 
 - Updater与Reader类似于Publisher和Subsriber的关系；
 - Updater更新内容后调用接口进行发布，Reader调用接口读取发布内容；
@@ -769,28 +711,22 @@ Quiescent Status，用于描述处理器的执行状态。当某个CPU正在访�
 
 为了解决这个问题，Linux提供了rcu_assign_pointer/rcu_dereference宏来确保执行顺序，Linux内核也基于rcu_assign_pointer/rcu_dereference宏进行了更高层的封装，比如list, hlist，因此，在内核中有三种被RCU保护的场景：1）指针；2）list链表；3）hlist哈希链表。
 
-针对这三种场景，Publish-Subscribe接口如下表：
-
-![Publish-Subscribe接口](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327233932.png)
+针对这三种场景，Publish-Subscribe 接口分别是：指针使用 rcu_assign_pointer/rcu_dereference；list 使用 list_add_rcu/list_del_rcu/list_for_each_entry_rcu 等；hlist 使用 hlist_add_head_rcu/hlist_del_rcu/hlist_for_each_entry_rcu 等。
 
 ##### Wait For Pre-Existing RCU Readers to Complete
 
 Reclaimer需要对旧的临界资源进行回收，那么问题来了，什么时候进行呢？因此RCU需要提供一种机制来确保之前的RCU读者全部都已经完成，也就是退出了rcu_read_lock/rcu_read_unlock标定的临界区后，才能进行回收处理。
 
-![Wait For Pre-Existing RCU Readers to Complete](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327234028.png)
-
-- 图中Readers和Updater并发执行；
+- Readers和Updater并发执行；
 - 当Updater执行Removal操作后，调用synchronize_rcu，标志着更新结束并开始进入回收阶段；
-- 在synchronize_rcu调用后，此时可能还有新的读者来读取临界资源(更新后的内容)，但是，Grace Period只等待Pre-Existing的读者，也就是在图中的Reader-4, Reader-5。只要这些之前就存在的RCU读者退出临界区后，意味着宽限期的结束，因此就进行回收处理工作了；
+- 在synchronize_rcu调用后，此时可能还有新的读者来读取临界资源(更新后的内容)，但是，Grace Period只等待Pre-Existing的读者，也就是Reader-4、Reader-5。只要这些之前就存在的RCU读者退出临界区后，意味着宽限期的结束，因此就进行回收处理工作了；
 - synchronize_rcu并不是在最后一个Pre-ExistingRCU读者离开临界区后立马就返回，它可能存在一个调度延迟；
 
 ##### Maintain Multiple Versions of Recently Updated Objects
 
 从2.2.2节可以看出，在Updater进行更新后，在Reclaimer进行回收之前，是会存在新旧两个版本的临界资源的，只有在synchronize_rcu返回后，Reclaimer对旧的临界资源进行回收，最后剩下一个版本。显然，在有多个Updater时，临界资源的版本会更多。
 
-还是来张图吧，分别以指针和链表为例：
-
-![Maintain Multiple Versions of Recently Updated Objects](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327234339.png)
+分别以指针和链表为例：
 
 - 调用synchronize_rcu开始为临界点，分别维护不同版本的临界资源；
 - 等到Reclaimer回收旧版本资源后，最终归一统；
@@ -799,36 +735,26 @@ Reclaimer需要对旧的临界资源进行回收，那么问题来了，什么�
 
 从《Linux RCU原理剖析（一）-初窥门径》的示例中，我们看到了RCU的写端调用了synchronize_rcu/call_rcu两种类型的接口，事实上Linux内核提供了三种不同类型的RCU，因此也对应了相应形式的接口。
 
-来张图：
-
-![RCU更新接口](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327235431.png)
-
-- RCU写者，可以通过两种方式来等待宽限期的结束，一种是调用同步接口等待宽限期结束，一种是异步接口等待宽限期结束后再进行回调处理，分别如上图的左右两侧所示；
-- 从图中的接口调用来看，同步接口中实际会去调用异步接口，只是同步接口中增加了一个wait_for_completion睡眠等待操作，并且会将wakeme_after_rcu回调- 函数传递给异步接口，当宽限期结束后，在异步接口中回调了wakeme_after_rcu进行唤醒处理；
+- RCU写者，可以通过两种方式来等待宽限期的结束，一种是调用同步接口等待宽限期结束，一种是异步接口等待宽限期结束后再进行回调处理；
+- 从接口调用关系来看，同步接口中实际会去调用异步接口，只是同步接口中增加了一个wait_for_completion睡眠等待操作，并且会将wakeme_after_rcu回调- 函数传递给异步接口，当宽限期结束后，在异步接口中回调了wakeme_after_rcu进行唤醒处理；
 - 目前内核中提供了三种RCU：
   - 可抢占RCU：rcu_read_lock/rcu_read_unlock来界定区域，在读端临界区可以被其他进程抢占；
   - 不可抢占RCU(RCU-sched)：rcu_read_lock_sched/rcu_read_unlock_sched来界定区域，在读端临界区不允许其他进程抢占；
   - 关下半部RCU(RCU-bh)：rcu_read_lock_bh/rcu_read_unlock_bh来界定区域，在读端临界区禁止软中断；
 
-- 从图中可以看出来，不管是同步还是异步接口，最终都是调到__call_rcu接口，它是接口实现的关键，所以接下来分析下这个函数了；
+- 不管是同步还是异步接口，最终都是调到__call_rcu接口，它是接口实现的关键，所以接下来分析下这个函数了；
 
 ###### __call_rcu
-
-![__call_rcu](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327235709.png)
 
 - __call_rcu函数，第一个功能是注册回调函数，而回调的函数的维护是在rcu_data结构中的struct rcu_segcblist cblist字段中；
 rcu_accelerate_cbs/rcu_advance_cbs，实现中都是通过操作struct rcu_segcblist结构，来完成回调函数的移动处理等；
 - __call_rcu函数第二个功能是判断是否需要开启新的宽限期GP；
 
-链表的维护关系如下图所示：
+回调函数链表的维护关系如下：
 
-![链表的维护关系](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327235801.png)
-
-- 实际的设计比较巧妙，通过一个链表来链接所有的回调函数节点，同时维护一个二级指针数组，用于将该链表进行分段，分别维护不同阶段的回调函数，回调函数的移动方向如图所示，关于回调函数节点的处理都围绕着这个图来展开；
+- 实际的设计比较巧妙，通过一个链表来链接所有的回调函数节点，同时维护一个二级指针数组，用于将该链表进行分段，分别维护不同阶段的回调函数，回调函数会随着宽限期的推进在各段之间移动，关于回调函数节点的处理都围绕这条分段链表展开；
 
 那么通过__call_rcu注册的这些回调函数在哪里调用呢？答案是在RCU_SOFTIRQ软中断中：
-
-![RCU_SOFTIRQ](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240327235942.png)
 
 - 当invoke_rcu_core时，在该函数中调用raise_softirq接口，从而触发软中断回调函数rcu_process_callbacks的执行；
 - 涉及到与宽限期GP相关的操作，在rcu_process_callbacks中会调用rcu_gp_kthread_wake唤醒内核线程，最终会在rcu_gp_kthread线程中执行；
@@ -840,8 +766,6 @@ rcu_accelerate_cbs/rcu_advance_cbs，实现中都是通过操作struct rcu_segcb
 
 既然涉及到宽限期GP的操作，都放到了rcu_gp_kthread内核线程中了，那么来看看这个内核线程的逻辑操作吧：
 
-![宽限期开始与结束](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328000114.png)
-
 - 内核分别为rcu_preempt_state, rcu_bh_state, rcu_sched_state创建了内核线程rcu_gp_kthread；
 - rcu_gp_kthread内核线程主要完成三个工作：
   - 1）创建新的宽限期GP；
@@ -850,8 +774,6 @@ rcu_accelerate_cbs/rcu_advance_cbs，实现中都是通过操作struct rcu_segcb
 
 ###### 静止状态检测及报告
 
-![静止状态检测及报告](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328000231.png)
-
 - rcu_sched/rcu_bh类型的RCU中，当检测CPU处于用户模式或处于idle线程中，说明当前CPU已经离开了临界区，经历了一个QS静止状态，对于rcu_bh的RCU，如果没有出去softirq上下文中，也表明CPU经历了QS静止状态；
 - 在rcu_pending满足条件的情况下，触发软中断的执行，rcu_process_callbacks将会被调用；
 - 在rcu_process_callbacks回调函数中，对宽限期进行判断，并对静止状态逐级上报，如果整个树状结构都经历了静止状态，那就表明了宽限期的结束，从而唤醒内核线程去处理；
@@ -859,27 +781,15 @@ rcu_accelerate_cbs/rcu_advance_cbs，实现中都是通过操作struct rcu_segcb
 
 ## 内存管理
 
-内存管理子系统的架构如图 3.1 所示，分为用户空间、内核空间和硬件 3 个层面。
-
-![内存管理架构图](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20231122154606.png)
+内存管理子系统从架构上分为用户空间、内核空间和硬件 3 个层面。
 
 ### 虚拟内存
 
 #### 64位虚拟内存空间
 
-![64虚拟内存空间](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114817.png)
-
-![64位虚拟内存空间整体布局](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328123227.png)
-
 ##### 用户态虚拟内存空间
 
-![用户态虚拟内存空间](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115037.png)
-
-![内核如何布局进程虚拟内存空间](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115127.png)
-
-![20240328115157](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115157.png)
-
-![20240328115223](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115223.png)
+在 64 位 Linux 中，用户态虚拟内存空间位于地址空间的低端（x86-64 上为 0x0000_0000_0000_0000～0x0000_7fff_ffff_ffff），每个进程独享一份，包含代码段、数据段、BSS、堆、文件映射区和栈等区域。
 
 ##### 虚拟内存区域相关操作
 
@@ -894,14 +804,9 @@ struct vm_operations_struct {
 }
 ```
 
-![20240328115416](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115416.png)
-![20240328115445](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328115445.png)
-
-![Linux 内核角度探秘 JDK NIO 文件读写本质](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328122807.png)
-
 ##### 内核虚拟内存空间
 
-![内核虚拟内存空间](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328123100.png)
+内核虚拟内存空间位于地址空间的高端，所有进程共享同一份内核页表映射。它包含直接映射区（线性映射物理内存）、vmalloc 区、vmemmap 区、模块区和固定映射区等。
 
 ### 物理内存
 
@@ -909,11 +814,7 @@ struct vm_operations_struct {
 
 慢速路径 slow path：慢速路径下的内存分配逻辑就变的非常复杂了，其中包含了内存分配的各种异常情况的处理，并且会根据文中介绍的 GFP_，ALLOC_ 等各种内存分配策略掩码进行不同分支的处理，整个链路非常庞大且繁杂。
 
-![物理内存分配链路](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328090419.png)
-
 无论是快速路径还是慢速路径下的内存分配都需要最终调用 get_page_from_freelist 函数进行最终的内存分配。只不过，不同路径下 get_page_from_freelist 函数的内存分配策略以及需要考虑的内存水位线会有所不同，其中慢速路径下的内存分配策略会更加激进一些。
-
-![get_page_from_freelist](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328090322.png)
 
 ### 伙伴系统
 
@@ -935,19 +836,13 @@ __rmqueue 函数封装的是伙伴系统的整个完整流程，底层调用了 
 
 如果内存分配策略 alloc_flags 指定了 ALLOC_HARDER 时，就会调用 __rmqueue_smallest 直接进入伙伴系统，从 free_list[MIGRATE_HIGHATOMIC] 链表中分配 order 大小的物理内存块。
 
-![20240328124812](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328124812.png)
-
-![20240328124839](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328124839.png)
-
 #### 内存释放
 
-![20240328124456](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328124456.png)
+内存释放走的是与分配相反的路径：页框最终归还到伙伴系统，小对象则归还到对应的 slab cache。释放时需要根据页的 order 找到伙伴，并在满足条件时逐级合并，以减少内存碎片。
 
 ### slub内存池
 
-![5. 从一个简单的内存页开始聊 slab](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328125048.png)
-
-![20240328125111](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328125111.png)
+slub 是 Linux 默认的 slab 分配器，用于管理内核中的小块内存对象。它把对象按大小分类，每个类别对应一个 kmem_cache（对象池），对象池再按 slab 组织物理页。
 
 ### slub 数据结构
 
@@ -999,15 +894,11 @@ struct page {
 
 #### 内存对齐
 
-![内存对齐](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328125124.png)
-
-![让对象的 object size 按照 word size 进行对齐](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328125210.png)
-
-![20240328131040](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328131040.png)
+slub 会按对象大小和对齐要求（如 ARCH_KMALLOC_MINALIGN、缓存行大小）排布对象，避免同一缓存行被多个对象共享而造成伪共享，同时尽量减少元数据开销。
 
 #### freepointer
 
-![freepointer](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328113837.png)
+slub 把空闲对象的指针直接存放在对象本身的内存里（freepointer），而不是为每个对象额外维护链表节点，从而降低元数据开销；空闲对象通过该指针串成 freelist。
 
 #### kmem_cache
 
@@ -1020,32 +911,27 @@ struct kmem_cache {
 }
 ```
 
-![20240328131326](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328131326.png)
-
 ##### slab cache 的架构全貌
 
-![slab cache 的架构全貌](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328001326.png)
+一个 slab cache 由 kmem_cache 描述，内部维护 per-CPU 缓存、partial 链表和 full 链表。分配时优先走当前 CPU 的缓存，缓存不足再从 partial 链表或伙伴系统补充 slab。
 
 #### 7. slab 内存分配原理
 
 ##### 7.1 从本地 cpu 缓存中直接分配
 
-![7.1 从本地 cpu 缓存中直接分配](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114224.png)
+slub 为每个 CPU 维护一个当前 slab（cpu_slab），分配时直接从该 slab 的 freelist 取对象，不需要加锁，这是最快路径。
 
 ##### 7.2 从本地 cpu 缓存 partial 列表中分配
 
-![7.2 从本地 cpu 缓存 partial 列表中分配](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114324.png)
+当前 CPU 的 slab 用完后，会从该 CPU 的 partial 链表中取一个空闲 slab 作为新的 cpu_slab；partial 链表为空时再进入下一步。
 
 ##### 7.3 从 NUMA 节点缓存中分配
 
-![20240328114412](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114412.png)
-
-![20240328114445](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114445.png)
+若本地 CPU 的 partial 链表也为空，则从当前 NUMA 节点的 partial 链表中查找可用的 slab，以尽量保持内存访问的本地性。
 
 ##### 7.4 从伙伴系统中重新申请 slab
 
-![20240328114521](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114521.png)
-![20240328114532](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328114532.png)
+当节点缓存中也找不到可用 slab 时，slub 会调用伙伴系统申请新的物理页，将其初始化为 slab 并挂入缓存，然后继续分配。
 
 ### kmalloc
 
@@ -1057,45 +943,31 @@ KMALLOC_DMA 表示 kmalloc 需要从 ZONE_DMA 物理内存区域中分配内存�
 
 KMALLOC_RECLAIM 表示需要分配可以被回收的内存，RECLAIM 类型的内存页，不能移动，但是可以直接回收，比如文件缓存页，它们就可以直接被回收掉，当再次需要的时候可以从磁盘中读取生成。或者一些生命周期比较短的内存页，比如 DMA 缓存区中的内存页也是可以被直接回收掉。
 
-![20240328132447](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328132447.png)
-
 #### kmalloc 内存池的整体架构
 
 kmalloc 内存池的本质其实还是 slab 内存池，底层依赖于 slab alloactor 体系，在 kmalloc 体系的内部，管理了多个不同尺寸的 slab cache，kmalloc 只不过负责根据内核申请的内存块尺寸大小来选取一个最佳合适尺寸的 slab cache。
 
 最终内存块的分配和释放还需要由底层的 slab cache 来负责，经过前两个小节的介绍，现在我们已经对 kmalloc 内存池架构有了一个初步的认识。
 
-![20240328132216](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328132216.png)
-
 其中 kmalloc 支持的最小内存块尺寸为：2^KMALLOC_SHIFT_LOW，在 slub 实现中 KMALLOC_SHIFT_LOW = 3，kmalloc 支持的最小内存块尺寸为 8 字节大小。
 
 kmalloc 支持的最大内存块尺寸为：2^KMALLOC_SHIFT_HIGH，在 slub 实现中 KMALLOC_SHIFT_HIGH = 13，kmalloc 支持的最大内存块尺寸为 8K ，也就是两个内存页大小。
-
-![20240328132532](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328132532.png)
 
 ### 虚拟内存到物理内存的映射
 
 cr3 寄存器中存放的是当前进程顶级页表 pgd 的物理内存地址，不能是虚拟内存地址。
 
-进程的上下文在内核中完成切换之后，现在 cr3 寄存器中保存的就是当前进程顶级页表的起始物理内存地址了，当 CPU 通过下图所示的虚拟内存地址访问进程的虚拟内存时，CPU 首先会从 cr3 寄存器中获取到当前进程的顶级页表起始地址，然后从虚拟内存地址中提取出虚拟内存页对应 PTE 在页表内的偏移，通过 页表起始地址 + 页表内偏移 * sizeof(PTE) 这个公式定位到虚拟内存页在页表中所对应的 PTE。
-
-![20240328132749](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328132749.png)
+进程的上下文在内核中完成切换之后，现在 cr3 寄存器中保存的就是当前进程顶级页表的起始物理内存地址了，当 CPU 通过虚拟内存地址访问进程的虚拟内存时，CPU 首先会从 cr3 寄存器中获取到当前进程的顶级页表起始地址，然后从虚拟内存地址中提取出虚拟内存页对应 PTE 在页表内的偏移，通过 页表起始地址 + 页表内偏移 * sizeof(PTE) 这个公式定位到虚拟内存页在页表中所对应的 PTE。
 
 #### 四级页表
 
-但是在内核中一般不这么叫，内核中称上图中的四级页表为全局页目录 PGD（Page Global Directory），PGD 中的页目录项叫做 pgd_t，PGD 是四级页表体系下的顶级页表，保存在进程 struct mm_struct 结构中的 pgd 属性中，在进程调度上下文切换的时候，由内核通过 load_new_mm_cr3 方法将 pgd 中保存的顶级页表虚拟内存地址转换物理内存地址，随后加载到 cr3 寄存器中，从而完成进程虚拟内存空间的切换。
+但是在内核中一般不这么叫，内核中称上述四级页表为全局页目录 PGD（Page Global Directory），PGD 中的页目录项叫做 pgd_t，PGD 是四级页表体系下的顶级页表，保存在进程 struct mm_struct 结构中的 pgd 属性中，在进程调度上下文切换的时候，由内核通过 load_new_mm_cr3 方法将 pgd 中保存的顶级页表虚拟内存地址转换物理内存地址，随后加载到 cr3 寄存器中，从而完成进程虚拟内存空间的切换。
 
-上图中的三级页表在内核中称之为上层页目录 PUD（Page Upper Directory），PUD 中的页目录项叫做 pud_t 。
+上述三级页表在内核中称之为上层页目录 PUD（Page Upper Directory），PUD 中的页目录项叫做 pud_t 。
 
 二级页表在这里也改了一个名字叫做中间页目录 PMD（Page Middle Directory），PMD 中的页目录项叫做 pmd_t，最底层的用来直接映射物理内存页面的一级页表，名字不变还叫做页表（Page Table）
 
 由于在四级页表体系下，又多引入了两层页目录（PGD,PUD）,所以导致其通过虚拟内存地址定位 PTE 的步骤又增加了两步，首先需要定位顶级页表 PGD 中的页目录项 pgd_t，pgd_t 指向的 PUD 的起始内存地址，然后在定位 PUD 中的页目录项 pud_t，后面的流程就和二级页表一样了。
-
-![四级页表](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133038.png)
-
-![20240328133214](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133214.png)
-
-![20240328133238](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133238.png)
 
 PAGE_SHIFT  用来表示页表中的一个 PTE 可以映射的物理内存大小（4K）。
 
@@ -1109,13 +981,7 @@ PGD_SHIFT 用来表示 PGD 中的一个页目录项 pgd_t 可以映射的物理�
 
 在进程虚拟内存空间的布局中，有一段叫做文件映射与匿名映射区的虚拟内存区域，当我们在用户态应用程序中调用 mmap 进行内存映射的时候，所需要的虚拟内存就是在这个区域中划分出来的。
 
-![20240328133455](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133455.png)
-
-![20240328133423](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133423.png)
-
 如果我们通过 mmap 映射的是磁盘上的一个文件，那么就需要通过参数 fd 来指定要映射文件的描述符（file descriptor），通过参数 offset 来指定文件映射区域在文件中偏移。
-
-![20240328133521](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133521.png)
 
 #### struct vm_area_struct
 
@@ -1137,45 +1003,31 @@ struct vm_area_struct {
 }
 ```
 
-![20240328133658](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133658.png)
-
-![20240328133726](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133726.png)
-
 #### 私有匿名映射
 
-![20240328133935](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328133935.png)
+私有匿名映射（MAP_PRIVATE | MAP_ANONYMOUS）不关联任何文件，常用于 malloc 的大块内存、进程栈等。写时复制（COW）保证各进程的修改互不可见。
 
 #### 私有文件映射
 
-![20240328134019](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134019.png)
-
-![20240328134047](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134047.png)
-
-![20240328134100](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134100.png)
-
 ##### 多进程读取文件映射区域
 
-![20240328134124](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134124.png)
+多个进程以只读方式映射同一个文件时，会共享同一份物理页缓存（page cache），从而节省内存并保证内容一致。
 
 ##### 多进程改写文件映射区域
-
-![20240328134143](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134143.png)
-
-![20240328134331](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134331.png)
 
 进程 1 和进程 2 对各自虚拟内存区的修改只能反应到各自对应的物理内存页上，而且各自的修改在进程之间是互不可见的，最重要的一点是这些修改均不会回写到磁盘文件中，这就是私有文件映射的核心特点。
 
 ##### 代码段和数据段
 
-![20240328134448](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134448.png)
+可执行文件的代码段通常以只读、私有文件映射方式加载；数据段则以私有可写映射加载，写入时触发 COW，生成进程私有的物理页。
 
 #### 共享文件映射
 
-![20240328134529](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134529.png)
+共享文件映射（MAP_SHARED）让多个进程映射同一文件时共享同一份物理页，任一进程的修改对其他进程可见，并会回写到文件。
 
 #### 共享匿名映射
 
-![20240328134624](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328134624.png)
+共享匿名映射（MAP_SHARED | MAP_ANONYMOUS）不关联文件，但映射的物理页可在父子进程或通过 fork 的进程间共享，常用于进程间共享内存。
 
 #### 大页内存映射
 
@@ -1222,13 +1074,9 @@ int main(void)
 
 ### Page Faults
 
-![20240328135752](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328135752.png)
-
 无论是匿名映射还是文件映射，内核在处理 mmap 映射过程中貌似都是在进程的虚拟地址空间中和虚拟内存打交道，仅仅只是为 mmap 映射分配出一段虚拟内存而已，整个映射过程我们并没有看到物理内存的身影。
 
 #### 1. 缺页中断产生的原因
-
-![20240328135830](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328135830.png)
 
 当 CPU 访问这段由 mmap 映射出来的虚拟内存区域 vma 中的任意虚拟地址时，MMU 在遍历进程页表的时候就会发现，该虚拟内存地址在进程顶级页目录 PGD（Page Global Directory）中对应的页目录项 pgd_t 是空的，该 pgd_t 并没有指向其下一级页目录 PUD（Page Upper Directory）。
 
@@ -1271,8 +1119,6 @@ do_kern_addr_fault 函数的工作主要就是处理内核虚拟内存空间中 
 而内核通过 vmalloc 内存分配接口在 vmalloc 映射区申请内存的时候，首先也会在 32T 大小的 vmalloc 映射区中划分出一段未被使用的虚拟内存区域出来，我们暂且叫这段虚拟内存区域为 vmalloc 区，这一点和前面文章介绍的 mmap 非常相似，只不过 mmap 工作在用户空间的文件与匿名映射区，vmalloc 工作在内核空间的 vmalloc 映射区。
 
 内核空间中的 vmalloc 映射区就是由这样一段一段的 vmalloc 区组成的，每调用一次 vmalloc 内存分配接口，就会在  vmalloc 映射区中映射出一段 vmalloc 虚拟内存区域，而且每个 vmalloc 区之间隔着一个 4K 大小的 guard page（虚拟内存），用于防止内存越界，将这些非连续的物理内存区域隔离起来。
-
-![20240328140240](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328140240.png)
 
 和 mmap 不同的是，vmalloc 在分配完虚拟内存之后，会马上为这段虚拟内存分配物理内存，内核会首先计算出由 vmalloc 内存分配接口映射出的这一段虚拟内存区域 vmalloc 区中包含的虚拟内存页数，然后调用伙伴系统依次为这些虚拟内存页分配物理内存页。
 
@@ -1339,8 +1185,6 @@ struct vmap_area {
 };
 ```
 
-![20240328140450](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328140450.png)
-
 看起来和用户空间中虚拟内存区域的组织形式越来越像了，不同的是由于用户空间是进程间隔离的，所以组织用户空间虚拟内存区域的红黑树以及双向链表是进程独占的。
 
 在我们了解了 vmalloc 动态映射区中的相关数据结构与组织形式之后，接下来我们看一看为 vmalloc 区分配物理内存的过程：
@@ -1401,19 +1245,13 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
 
 当内核通过 vmalloc 内存分配接口修改完内核主页表之后，主页表中的相关页目录项以及页表项的内容就发生了改变，而这背后的一切，进程现在还被蒙在鼓里，一无所知，此时，进程页表中的内核部分相关的页目录项以及页表项还都是空的。
 
-![20240328140839](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328140839.png)
-
 当进程陷入内核态访问这部分页表的的时候，会发现相关页目录或者页表项是空的，就会进入缺页中断的内核处理部分，也就是前面提到的 vmalloc_fault 函数中，如果发现缺页的虚拟地址在内核主页表顶级全局页目录表中对应的页目录项 pgd 存在，而缺页地址在进程页表内核部分对应的 pgd 不存在，那么内核就会把内核主页表中 pgd 页目录项里的内容复制给进程页表内核部分中对应的 pgd。
 
-![20240328140914](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328140914.png)
-
-事实上，同步内核主页表的工作只需要将缺页地址对应在内核主页表中的顶级全局页目录项 pgd 同步到进程页表内核部分对应的 pgd 地址处就可以了，正如上图中所示，每一级的页目录项中存放的均是其下一级页目录表的物理内存地址。
+事实上，同步内核主页表的工作只需要将缺页地址对应在内核主页表中的顶级全局页目录项 pgd 同步到进程页表内核部分对应的 pgd 地址处就可以了，每一级的页目录项中存放的均是其下一级页目录表的物理内存地址。
 
 #### 4. 用户态缺页异常处理 —— do_user_addr_fault
 
 进程用户态虚拟地址空间的布局我们现在已经非常熟悉了，在处理用户态缺页异常之前，内核需要在进程用户空间众多的虚拟内存区域 vma 之中找到引起缺页的内存地址 address 究竟是属于哪一个 vma 。如果没有一个 vma 能够包含 address ， 那么就说明该 address 是一个还未被分配的虚拟内存地址，进程对该地址的访问是非法的，自然也就不用处理缺页了。
-
-![20240328141035](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328141035.png)
 
 ##### 5. handle_mm_fault 完善进程页表体系
 
@@ -1428,8 +1266,6 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
 ##### 6. handle_pte_fault
 
 handle_pte_fault 是 Linux 内核中处理页表项故障（Page Table Entry Fault）的关键函数之一。当用户空间程序试图访问一个虚拟地址，但该地址对应的页表项不存在、不可访问或者无效时，就会触发页表项故障。
-
-![20240328141844](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328141844.png)
 
 ```c
 static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
@@ -1846,8 +1682,6 @@ struct page *do_wp_page(struct vm_fault *vmf)
 
 我们需要的物理内存页不在内存中反而在磁盘中，现在我们就需要将物理内存页从磁盘中 swap in 进来。但在 swap in 之前内核需要知道该物理内存页的内容被保存在磁盘的什么位置上。
 
-![20240328142954](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328142954.png)
-
 64 位的 pte 主要用来表示物理内存页的地址以及相关的权限标识位，但是当物理内存页不在内存中的时候，这些比特位就没有了任何意义。我们何不将这些已经没有任何意义的比特位利用起来，在物理内存页被 swap out 到磁盘上的时候，将物理内存页在磁盘上的位置保存在这些比特位中。本质上还利用的是之前 pte 中的那 64 个比特，为了区别 swap 的场景，内核使用了一个新的结构体  swp_entry_t 来包装。
 
 swap in 的首要任务就是先要从进程页表中将这个 swp_entry_t 读取出来，然后从 swp_entry_t 中解析出内存页在 swap 交换区中的位置，根据磁盘位置信息将内存页的内容读取到内存中。由于产生了新的物理内存页，所以就要创建新的 pte 来映射这个物理内存页，然后将新的 pte 设置到页表中，替换原来的 swp_entry_t。
@@ -1889,15 +1723,9 @@ struct swap_info_struct {
 
 什么意思呢 ？ 比如现在系统中一共有三个进程同时共享一个物理内存页（内存中的概念），当这个物理内存页被 swap out 到交换区上时，就变成了 slot （内存页在交换区中的概念），现在物理内存页没了，这三个共享进程就只能在各自的页表中指向这个 slot，因此该 slot 的引用计数就是 3，对应在数组 swap_map 中的值也是 3 。
 
-![20240328143200](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143200.png)
-
 ####### SWAPFILE_CLUSTER
 
-![20240328143438](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143438.png)
-
 slot 与连续的磁盘块组的映射关系保存在 swap_extent 结构中：
-
-![20240328143542](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143542.png)
 
 ###### 10.2 一睹 swp_entry_t 真容
 
@@ -1912,14 +1740,6 @@ slot 与连续的磁盘块组的映射关系保存在 swap_extent 结构中：
 进程1 在 swap in 的时候首先会到 swap cache 中去查找，看看是否有其他进程已经把内存页 swap in 进来了，如果  swap  cache 中没有才会调用 swap_readpage 从磁盘中去读取。
 
 当内核通过 swap_readpage 将内存页中的内容从磁盘中读取进内存之后，内核会把这个匿名页先放入 swap cache 中。进程 1 的页表将原来的 swp_entry_t 填充为 pte 并指向 swap cache 中的这个内存页。
-
-![20240328143811](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143811.png)
-
-![20240328143823](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143823.png)
-
-![20240328143833](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328143833.png)
-
-![20240328144104](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328144104.png)
 
 ###### 10.4 swap 预读
 
@@ -1951,8 +1771,6 @@ swap 预读在 Linux 内核中由 swapin_readahead 函数负责，它有两种�
 
 - 为新的内存页建立反向映射关系，加入 lru active list 中，最后 swap_free 释放交换区中的资源。
 
-![20240328144356](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328144356.png)
-
 ## 中断
 
 这段文字概述了第10章《中断与时钟》的主要内容，主要涵盖了中断和定时器在Linux设备驱动编程中的重要性以及相应的处理流程和机制。以下是对每个小节的简要解释：
@@ -1982,8 +1800,6 @@ swap 预读在 Linux 内核中由 swapin_readahead 函数负责，它有两种�
 
 这些主题涵盖了在Linux设备驱动编程中涉及中断和定时器的核心概念、架构和编程方法。理解这些内容对于设计和实现高效、稳定的设备驱动程序至关重要。
 
-![中断](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328001902.png)
-
 - 硬件层：最下层为硬件连接层，对应的是具体的外设与SoC的物理连接，中断信号是从外设到中断控制器，由中断控制器统一管理，再路由到处理器上；
 - 硬件相关层：这个层包括两部分代码，一部分是架构相关的，比如ARM64处理器处理中断相关，另一部分是中断控制器的驱动代码；
 - 通用层：这部分也可以认为是框架层，是硬件无关层，这部分代码在所有硬件平台上是通用的；
@@ -1995,17 +1811,11 @@ swap 预读在 Linux 内核中由 swapin_readahead 函数负责，它有两种�
 
 ARM公司提供了一个通用的中断控制器GIC（Generic Interrupt Controller），GIC的版本包括V1 ~ V4，由于本人使用的SoC中的中断控制器是V2版本，本文将围绕GIC-V2来展开介绍；
 
-来一张功能版的框图：
-
-![GIC硬件原理](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328002049.png)
+GIC-V2 的功能和组成如下：
 
 - GIC-V2从功能上说，除了常用的中断使能、中断屏蔽、优先级管理等功能外，还支持安全扩展、虚拟化等；
 - GIC-V2从组成上说，主要分为Distributor和CPU Interface两个模块，Distributor主要负责中断源的管理，包括优先级的处理，屏蔽、抢占等，并将最高优- 先级的中断分发给CPU Interface，CPU Interface主要用于连接处理器，与处理器进行交互；
 - Virtual Distributor和Virtual CPU Interface都与虚拟化相关，本文不深入分析；
-
-再来一张细节图看看Distributor和CPU Interface的功能：
-
-![20240328002231](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328002231.png)
 
 - GIC-V2支持三种类型的中断：
 
@@ -2034,9 +1844,7 @@ ARM公司提供了一个通用的中断控制器GIC（Generic Interrupt Controll
   - 设置处理器的中断抢占策略；
   - 确定处理器的最高优先级pending中断；
 
-中断处理的状态机如下图：
-
-![中断处理的状态机](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328002530.png)
+中断处理的状态机包含以下四种状态：
 
 - Inactive：无中断状态；
 - Pending：硬件或软件触发了中断，但尚未传递到目标CPU，在电平触发模式下，产生中断的同时保持pending状态；
@@ -2056,28 +1864,22 @@ GIC检测中断流程如下：
 
 ARM平台的设备信息，都是通过Device Tree设备树来添加，设备树信息放置在arch/arm64/boot/dts/下
 
-下图就是一个中断控制器的设备树信息：
+一个中断控制器的设备树节点通常包含以下字段：
 
-![一个中断控制器的设备树信息](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328002810.png)
-
-- compatible字段：用于与具体的驱动来进行匹配，比如图片中arm, gic-400，可以根据这个名字去匹配对应的驱动程序；
+- compatible字段：用于与具体的驱动来进行匹配，比如 `arm,gic-400`，可以根据这个名字去匹配对应的驱动程序；
 - interrupt-cells字段：用于指定编码一个中断源所需要的单元个数，这个值为3。比如在外设在设备树中添加中断信号时，通常能看到类似interrupts = <0 23 4>;的信息，第一个单元0，表示的是中断类型（1：PPI，0：SPI），第二个单元23表示的是中断号，第三个单元4表示的是中断触发的类型；
-- reg字段：描述中断控制器的地址信息以及地址范围，比如图片中分别制定了GIC Distributor（GICD）和GIC CPU Interface（GICC）的地址信息；
+- reg字段：描述中断控制器的地址信息以及地址范围，比如分别指定 GIC Distributor（GICD）和 GIC CPU Interface（GICC）的地址信息；
 - interrupt-controller字段：表示该设备是一个中断控制器，外设可以连接在该中断控制器上；
 - 关于设备数的各个字段含义，详细可以参考Documentation/devicetree/bindings下的对应信息；
 
-设备树的信息，是怎么添加到系统中的呢？Device Tree最终会编译成dtb文件，并通过Uboot传递给内核，在内核启动后会将dtb文件解析成device_node结构。关于设备树的相关知识，本文先不展开，后续再找机会补充。来一张图，先简要介绍下关键路径：
-
-![20240328002935](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328002935.png)
+设备树的信息，是怎么添加到系统中的呢？Device Tree最终会编译成dtb文件，并通过Uboot传递给内核，在内核启动后会将dtb文件解析成device_node结构。关于设备树的相关知识，本文先不展开，后续再找机会补充。先简要介绍下关键路径：
 
 - 设备树的节点信息，最终会变成device_node结构，在内存中维持一个树状结构；
 - 设备与驱动，会根据compatible字段进行匹配；
 
 #### 驱动流程分析
 
-GIC驱动的执行流程如下图所示：
-
-![GIC驱动的执行流程](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328003053.png)
+GIC驱动的执行流程如下：
 
 - 首先需要了解一下链接脚本vmlinux.lds，脚本中定义了一个__irqchip_of_table段，该段用于存放中断控制器信息，用于最终来匹配设备；
 - 在GIC驱动程序中，使用IRQCHIP_DECLARE宏来声明结构信息，包括compatible字段和回调函数，该宏会将这个结构放置到__irqchip_of_table字段中；
@@ -2092,17 +1894,13 @@ GIC驱动的执行流程如下图所示：
 
 #### 数据结构分析
 
-![20240328003441](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328003441.png)
-
 - GIC驱动中，使用struct gic_chip_data结构体来描述GIC控制器的信息，整个驱动都是围绕着该结构体的初始化，驱动中将函数指针都初始化好，实际的工作是由中断信号触发，也就是在中断来临的时候去进行回调；
 - struct irq_chip结构，描述的是中断控制器的底层操作函数集，这些函数集最终完成对控制器硬件的操作；
 - struct irq_domain结构，用于硬件中断号和Linux IRQ中断号（virq，虚拟中断号）之间的映射；
 
 ##### IRQ domain
 
-IRQ domain用于将硬件的中断号，转换成Linux系统中的中断号（virtual irq, virq），来张图：
-
-![20240328003601](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328003601.png)
+IRQ domain用于将硬件的中断号，转换成Linux系统中的中断号（virtual irq, virq）：
 
 - 每个中断控制器都对应一个IRQ Domain；
 - 中断控制器驱动通过irq_domain_add_*()接口来创建IRQ Domain；
@@ -2111,11 +1909,9 @@ IRQ domain用于将硬件的中断号，转换成Linux系统中的中断号（vi
   - tree map：硬件中断号可能很大，可以选择树映射；
   - no map：硬件中断号直接就是Linux的中断号；
 
-三种映射的方式如下图：
+三种映射方式如下：
 
-![20240328003734](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328003734.png)
-
-- 图中描述了三个中断控制器，对应到三种不同的映射方式；
+- 三种映射方式分别对应不同的中断控制器配置；
 - 各个控制器的硬件中断号可以一样，最终在Linux内核中映射的中断号是唯一的；
 
 ### Arch-speicific代码分析
@@ -2125,8 +1921,6 @@ IRQ domain用于将硬件的中断号，转换成Linux系统中的中断号（vi
 - ARM64处理器有四个异常级别Exception Level：0~3，EL0级对应用户态程序，EL1级对应操作系统内核态，EL2级对应Hypervisor，EL3级对应Secure Monitor；
 
 - 异常触发时，处理器进行切换，并且跳转到异常向量表开始执行，针对中断异常，最终会跳转到irq_handler中；
-
-![20240328003927](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328003927.png)
 
 - 中断触发，处理器去异常向量表找到对应的入口，比如EL0的中断跳转到el0_irq处，EL1则跳转到el1_irq处；
 
@@ -2147,19 +1941,17 @@ GIC和Arch相关的介绍就此打住，下一篇文章会接着介绍通用的�
 
 #### struct irq_desc
 
-![20240328004417](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328004417.png)
-
 - Linux内核的中断处理，围绕着中断描述符结构struct irq_desc展开，内核提供了两种中断描述符组织形式：
 
   - 打开CONFIG_SPARSE_IRQ宏（中断编号不连续），中断描述符以radix-tree来组织，用户在初始化时进行动态分配，然后再插入radix-tree中；
   - 关闭CONFIG_SPARSE_IRQ宏（中断编号连续），中断描述符以数组的形式组织，并且已经分配好；
   - 不管哪种形式，都可以通过linux irq号来找到对应的中断描述符；
 
-- 图的左侧灰色部分，主要在中断控制器驱动中进行初始化设置，包括各个结构中函数指针的指向等，其中struct irq_chip用于对中断控制器的硬件操作，struct irq_domain与中断控制器对应，完成的工作是硬件中断号到Linux irq的映射；
+- 中断控制器驱动侧的部分，主要在中断控制器驱动中进行初始化设置，包括各个结构中函数指针的指向等，其中struct irq_chip用于对中断控制器的硬件操作，struct irq_domain与中断控制器对应，完成的工作是硬件中断号到Linux irq的映射；
 
-- 图的上侧灰色部分，中断描述符的创建（这里指CONFIG_SPARSE_IRQ），主要在获取设备中断信息的过程中完成的，从而让设备树中的中断能与具体的中断描述符irq_desc匹配；
+- 中断描述符的创建（这里指CONFIG_SPARSE_IRQ），主要在获取设备中断信息的过程中完成的，从而让设备树中的中断能与具体的中断描述符irq_desc匹配；
 
-图中剩余部分，在设备申请注册中断的过程中进行设置，比如struct irqaction中handler的设置，这个用于指向我们设备驱动程序中的中断处理函数了；
+剩余部分在设备申请注册中断的过程中进行设置，比如struct irqaction中handler的设置，这个用于指向我们设备驱动程序中的中断处理函数了；
 
 中断的处理主要有以下几个功能模块：
 
@@ -2176,8 +1968,6 @@ GIC和Arch相关的介绍就此打住，下一篇文章会接着介绍通用的�
 
 ##### 先来看第二个问题：设备硬件中断号到Linux irq中断号的映射
 
-![20240328004721](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328004721.png)
-
 - 硬件设备的中断信息都在设备树device tree中进行了描述，在系统启动过程中，这些信息都已经加载到内存中并得到了解析；
 - 驱动中通常会使用platform_get_irq或irq_of_parse_and_map接口，去根据设备树的信息去创建映射关系（硬件中断号到linux irq中断号映射）；
 - 《Linux中断子系统（一）-中断控制器及驱动分析》提到过struct irq_domain用于完成映射工作，因此在irq_create_fwspec_mapping接口中，会先去找到- 匹配的irq domain，再去回调该irq domain中的函数集，通常irq domain都是在中断控制器驱动中初始化的，以ARM GICv2为例，最终回调到gic_irq_domain_hierarchy_ops中的函数；
@@ -2187,8 +1977,6 @@ GIC和Arch相关的介绍就此打住，下一篇文章会接着介绍通用的�
   - 调用domain->ops->alloc函数来完成映射，在ARM GICv2驱动中对应gic_irq_domain_alloc函数，这个函数很关键，所以下文介绍一下；
 
 gic_irq_domain_alloc函数如下：
-
-![20240328004905](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328004905.png)
 
 - gic_irq_domain_translate：负责解析出设备树中描述的中断号和中断触发类型（边缘触发、电平触发等）；
 - gic_irq_domain_map：将硬件中断号和linux中断号绑定到一个结构中，也就完成了映射，此外还绑定了irq_desc结构中的其他字段，最重要的是设置了irq_desc->handle_irq的函数指针，这个最终是中断响应时往上执行的入口，这个是关键，下文讲述中断处理过程时还会提到；
@@ -2220,8 +2008,6 @@ gic_irq_domain_alloc函数如下：
 #define IRQF_COND_SUSPEND	0x00040000      //与NO_SUSPEND的用户共享中断时，执行本设备的中断处理函数
 ```
 
-![20240328005221](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328005221.png)
-
 - request_irq也是调用request_threaded_irq，只是在传参的时候，线程处理函数thread_fn函数设置成NULL；
 - 由于在硬件中断号和Linux中断号完成映射后，irq_desc已经创建好，可以通过irq_to_desc接口去获取对应的irq_desc；
 - 创建irqaction，并初始化该结构体中的各个字段，其中包括传入的中断处理函数赋值给对应的字段；
@@ -2236,21 +2022,15 @@ gic_irq_domain_alloc函数如下：
 
 来回顾一下《Linux中断子系统（一）-中断控制器及驱动分析》中的Arch-specific处理流程：
 
-![20240328005431](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328005431.png)
-
 - 中断收到之后，首先会跳转到异常向量表的入口处，进而逐级进行回调处理，最终调用到generic_handle_irq来进行中断处理。
 
-generic_handle_irq处理如下图：
-
-![20240328005521](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328005521.png)
+generic_handle_irq 的处理流程如下：
 
 - generic_handle_irq函数最终会调用到desc->handle_irq()，这个也就是对应到上文中在建立映射关系的过程中，调用irq_domain_set_info函数，设置好了函数指针，也就是handle_fasteoi_irq和handle_percpu_devid_irq；
 - handle_fasteoi_irq：处理共享中断，并且遍历irqaction链表，逐个调用action->handler()函数，这个函数正是设备驱动程序调用request_irq/request_threaded_irq接口注册的中断处理函数，此外如果中断线程化处理的话，还会调用__irq_wake_thread()唤醒内核线程；
 - handle_percpu_devid_irq：处理per-CPU中断处理，在这个过程中会分别调用中断控制器的处理函数进行硬件操作，该函数调用action->handler()来进行中断处理；
 
 来看看中断线程化处理后的唤醒流程吧__handle_irq_event_percpu->__irq_wake_thread：
-
-![20240328005644](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328005644.png)
 
 - __handle_irq_event_percpu->__irq_wake_thread将唤醒irq_thread中断内核线程；
 - irq_thread内核线程，将根据是否为强制中断线程化对函数指针handler_fn进行初始化，以便后续进行调用；
@@ -2379,7 +2159,7 @@ USB、PCI等总线：
 
 - 不仅限于I2C、SPI、USB，Linux的各个子系统都遵循相似的总线驱动架构。
 
-- 表17.1中列举了I2C、SPI、USB的架构类比，说明了它们在整体架构上的相似性。
+- I2C、SPI、USB 都遵循“总线-控制器-设备”的分层模型，在整体架构上具有相似性。
 
 控制器的枚举：
 
@@ -2480,29 +2260,19 @@ QEMU与KVM交互涉及到许多关键函数，其中一些主要函数包括：
 
 ### QEMU 的角色与发展历程
 
-![图 1-8 QEMU 的各种设备模拟方式](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240402113202.png)
-
 传统纯软件模拟
 
 - 最初，QEMU采用传统的纯软件模拟方式，通过软件实现各种外部设备的模拟。这种方式的优势在于通用性强，可以模拟几乎任何类型的设备，但性能相对较低。
 
-![图 7-11 QEMU 设备模拟前后端结构](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328105729.png)
-
-![图 7-14 虚拟机使用 tap 作为网络后端原理](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328105829.png)
-
 ### 转向 virtio
 
 随着虚拟化技术的发展，QEMU逐渐引入了 virtio 总线。virtio 是一种基于共享内存的设备虚拟化标准，它通过定义一组通用的设备接口和协议，实现了虚拟机与宿主机之间的高效通信。这种方式提高了性能，同时保持了一定的通用性。
-
-![转向 virtio](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328105932.png)
 
 virtio 是一种前后端架构，包括前端驱动（Front-End Driver）和后端设备（Back-End 
 Device）以及自身定义的传输协议。通过传输协议，virtio 不仅可以用于 QEMU/KVM 方案，也
 可以用于其他的虚拟化方案。如虚拟机可以不必是 QEMU，也可以是其他类型的虚拟机，后端
 不一定要在 QEMU 中实现，也可以在内核中实现（这实际上就是 vhost 方案，后面会详细介
 绍）。
-
-![图 7-21 vring 原理](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328110106.png)
 
 ### 转向 VFIO 设备直通
 
@@ -2537,7 +2307,7 @@ virtio 前后端结构
 
 virtio 数据传输
 
-- virtio 前后端驱动的数据传输通过 virtio 队列（virtqueue）实现，一个设备可以注册多个 virtqueue，每个队列处理不同的数据传输，包括控制层面和数据层面的队列。virtqueue 通过 vring 实现，是虚拟机和 QEMU 共享的环形缓冲区。虚拟机将数据描述放入 vring，QEMU 通过读取 vring 获取数据。vring 的基本原理如图 7-21 所示。
+- virtio 前后端驱动的数据传输通过 virtio 队列（virtqueue）实现，一个设备可以注册多个 virtqueue，每个队列处理不同的数据传输，包括控制层面和数据层面的队列。virtqueue 通过 vring 实现，是虚拟机和 QEMU 共享的环形缓冲区。虚拟机将数据描述放入 vring，QEMU 通过读取 vring 获取数据。vring 的基本原理是：描述符表记录缓冲区地址，available ring 由前端通知后端可用的描述符，used ring 由后端回写已处理的描述符。
 
 - virtio vring
 
@@ -2739,7 +2509,7 @@ VFIO框架设计简洁清晰，主要包含以下组件：
 
 - vfio_pci: 对设备驱动的封装，向用户进程提供访问设备驱动的功能，包括配置空间和模拟BAR。
 
-重要的VFIO功能之一是对各个设备进行分区。在VFIO中，有三个关键的概念：container、group和device。它们的关系如图7-55所示。
+重要的VFIO功能之一是对各个设备进行分区。在VFIO中，有三个关键的概念：container、group和device。它们的关系是：device 归属于 group，group 绑定到 container；container 是 IOMMU 操作的基本对象，一个 container 可以包含多个 group。
 
 #### VFIO 关键概念解析
 
@@ -2859,8 +2629,6 @@ migrate tcp:$ip:6666
 
 #### 内存热迁移
 
-![图 8-6 热迁移涉及的部分](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240328111443.png)
-
 - 1）源端将虚拟机所有 RAM 设置成脏页（dirty），主要函数为 ram_save_setup。
 
 - 2）持续迭代将虚拟机的脏页从源端发送到目的端，直到达到一定条件，如 QEMU 判断在
@@ -2870,5 +2638,4 @@ migrate tcp:$ip:6666
 - 3）停止源端上的虚拟机，把虚拟机剩下的脏页发送到目的端，之后发送源端上虚拟机的设
 备状态到目的端，这个过程涉及的主要函数为 qemu_savevm_state_complete_precopy。
 
-其中步骤 1）和步骤 2）是图 8-6 中的灰色区域，步骤 3）是中间部分灰色区域和左边的区
-域。迁移完成之后虚拟机就可以在目的端上面继续运行了。
+其中步骤 1）和步骤 2）属于迭代预拷贝阶段，步骤 3）属于停机后的最终拷贝阶段。迁移完成之后虚拟机就可以在目的端上面继续运行了。

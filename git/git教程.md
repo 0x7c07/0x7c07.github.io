@@ -69,11 +69,7 @@ git log --oneline | grep "arm64: implement ftrace with regs"
 
 <https://github.com/torvalds/linux/commit/3b23e4991fb6>
 
-将`3b23e4991fb6`替换成要查找的commit:
-
-![3b23e4991fb6最早出现在linux-v5.5-rc1上](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240418101723.png)
-
-![3b23e4991fb6最早出现在linux-v5.5-rc1上](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240418101819.png)
+将 `3b23e4991fb6` 替换成要查找的 commit 哈希，即可在 GitHub 上查看对应的提交。
 
 ## head
 

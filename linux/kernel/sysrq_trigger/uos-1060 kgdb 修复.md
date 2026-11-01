@@ -5,8 +5,6 @@
 将`x86-kernel` 分支`4.19-rc8`中的`kernel/debug`目录、`include/linux/sysrq.h`、`drivers/tty/sysrq.c`覆盖`4.19内核 6026`对应位置文件。
 编译过程中会遇到`include/linux/security2.h`中的`void security_set_audit_started(int started)`重复定义，注释掉154-156行即可。
 
-![涉及到的源码](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230711164047.png)
-
 - `4.19-rc8` 对应commit id：35a7f35ad1b1
 - `4.19内核 6026`对应commit id：69a08e713fb2
 
@@ -16,7 +14,7 @@
 git format-patch -1 c907106159ca -o kgdb_not_work.patch
 ```
 
-patch下载地址：[kgdb_not_work.patch](https://github.com/realwujing/realwujing.github.io/tree/main/linux/kernel/sysrq_trigger)
+patch下载地址：[kgdb_not_work.patch](kgdb_not_work.patch)
 
 ### 应用patch
 

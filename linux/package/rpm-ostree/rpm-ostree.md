@@ -69,8 +69,6 @@
 |          | Active-backup(主动备份)        | 原子更新 目标版本（状态）明确                                                                                                                                          | 分区固定，需要衡量根分区大小 需要多个 rootfs 对应分区，浪费空间 需要重启生效 每次下载完整的 rootfs ，升级动作耗时长                         |
 |          | rpm-ostree(OSTree)         | 基于 OSTree "git for OS" 原子升级，支持回滚 允许在多个 rootfs 之间切换 不可变文件系统 使用 RPM 构建 rootfs Package Layer ： 支持通过 rpm-ostree install 安装 RPM 原子更新 单一 repo 存储多个 rootfs 增量更新 | 需要重启生效 文件系统只读(除 /var 和 /etc)                                                                |
 
-![rpm-ostree分支](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230419214153.png)
-
 ```text
 git checkout e6a65b80dfd380bd994cf7851c6ff28e992ab2f8
 

@@ -1,0 +1,48 @@
+title: 0x7c07's Blog
+description: Linux、内核、qemu、BPF 与系统编程学习笔记
+lang: zh-CN
+
+# 站点由 GitHub Pages 内置的 Jekyll 构建（main 分支根目录）。
+# README.md 作为目录首页、.md 链接自动转 .html、代码高亮等，
+# 均由 GitHub Pages 默认启用的插件提供，无需在此重复声明 plugins，
+# 否则会覆盖默认列表（例如 jekyll-seo-tag 缺失会导致构建失败）。
+
+repository: 0x7c07/0x7c07.github.io
+theme: jekyll-theme-primer
+show_downloads: false
+
+# GitHub Pages 发布的是构建后的站点，站点大小上限为 1 GB。
+# 仓库里有些大体积二进制（内核源码分卷、未被笔记引用的大 PDF/压缩包等）
+# 不适合随站点发布，这里排除掉，避免构建超时或超过发布上限。
+# 注意：exclude 会覆盖 Jekyll 的默认排除项，因此把默认项也一并列出。
+exclude:
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules/
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+  # 内核源码分卷压缩包（约 1.6 GB）
+  - linux/kernel/drivers/baohua/develop/linux-rar
+
+  # 未被笔记引用的大体积文件
+  - 'linux/kernel/books/UEFI编程实践/UEFI编程实践.pdf_*'
+  - 'debug/assembly/汇编语言（第4版）@www.cmsblogs.cn.pdf'
+  - 'debug/bpf/BPF之巅 洞悉Linux系统和应用性能.pdf.tar.gz'
+  - 'debug/bpf/BPF之巅 洞悉Linux系统和应用性能.pdf'
+  - 'linux/package/deb/com.github.clash-for-windows_0.20.39_amd64.deb'
+  - 'linux/kernel/books/庖丁解牛十二刀5.9.pdf'
+  - 'debug/binary-analysis/二进制分析实战（打造自己的二进制插桩、分析和反汇编的Linux工具） ([荷]丹尼斯·安德里斯) (z-lib.org).pdf'
+  - 'cpp/thread/QThread/test.text'
+  - 'linux/kernel/Linux-0.11-zhaojiong/hit-oslab-linux-20110823.tar.gz'
+  - 'linux/kernel/books/[Debug Hacks 深入调试的技术和工具].2011.中文版.pdf'
+  - 'debug/bpf/perf-4.19'
+  - 'linux/kernel/drivers/sound/phytium/飞腾X100系列套片数据手册.pdf'
+  - 'architect/xisai/2024年下半年系统架构设计师架构知识点集锦+(2).pdf'
+  - 'architect/xisai/2024年系统架构设计师知识点集锦.pdf'
+  - 'linux/kernel/books/SELinux详解.pdf'

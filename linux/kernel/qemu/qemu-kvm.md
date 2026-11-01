@@ -13,7 +13,7 @@
 - [<font color=Red>虚拟化技术 — 硬件辅助的虚拟化技术</font>](https://mp.weixin.qq.com/s/NsdNFhoP0QwjfhsQIeRWeQ)
 - [<font color=Red>虚拟化技术 — QEMU-KVM 基于内核的虚拟机</font>](https://mp.weixin.qq.com/s/sn-TTwldA81uFuVn5NBMhg)
 
-- [<font color=Red>https://github.com/realwujing/realwujing.github.io/tree/main/linux/kernel/qemu</font>](https://github.com/realwujing/realwujing.github.io/tree/main/linux/kernel/qemu)
+- [<font color=Red>qemu 目录</font>](./)
 - [<font color=Red>Linux内核调试</font>](https://blog.csdn.net/onlylove_/category_11607029.html)
 
 ## virt-manager
@@ -63,8 +63,6 @@
 ### 共享目录
 
 在宿主机查看虚拟机共享目录配置:
-
-![共享目录](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240202130011.png)
 
 在虚拟机上执行下方命令：
 

@@ -27,7 +27,7 @@ drm_ioctl+0x1c0/0x398  // DRM设备的ioctl操作
 do_vfs_ioctl+0xa4/0x858  // 执行文件系统ioctl操作的内核函数
 ```
 
-![switch_to](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/switch_to.png)
+![switch_to](switch_to.png)
 
 ```c
 // vim mm/page_alloc.c +2697

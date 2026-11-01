@@ -9,7 +9,7 @@
 - [UNIX环境高级编程（第3版）pdf电子书下载-码农书籍网 (manongbook.com)](https://www.manongbook.com/linux/689.html)
 - [计算机免费书籍,电子书,pdf电子书,电子书籍,网络书籍,电脑书籍下载,编程书籍,编程电子书下载 - 脚本之家 (jb51.net)](https://www.jb51.net/books/)
 - [Linux 多线程服务端编程：使用 muduo C++ 网络库 (chenshuo.com)](http://chenshuo.com/book/)
-- [Linux多线程服务端编程：使用muduo+C++网络库.pdf](file:///C:/Users/wujing/OneDrive/code/book/Linux%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BC%96%E7%A8%8B%EF%BC%9A%E4%BD%BF%E7%94%A8muduo+C++%E7%BD%91%E7%BB%9C%E5%BA%93.pdf)
+- [Linux多线程服务端编程：使用muduo+C++网络库.pdf](https://chenshuo.com/book/)
 - [<font color=Red>UNIX环境高级编程(第三版).pdf</font>](https://awesome-programming-books.github.io/linux/UNIX%E7%8E%AF%E5%A2%83%E9%AB%98%E7%BA%A7%E7%BC%96%E7%A8%8B(%E7%AC%AC%E4%B8%89%E7%89%88).pdf)
 
 ## 计算机考研

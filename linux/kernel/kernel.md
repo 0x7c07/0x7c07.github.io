@@ -53,7 +53,7 @@
 ### Linux 0.11
 
 - [品读 Linux 0.11 核心代码](https://github.com/sunym1993/flash-linux0.11-talk)
-- [Linux内核完全注释(修正版v3.0).pdf](https://github.com/realwujing/Linux-0.11)
+- [Linux内核完全注释(修正版v3.0).pdf](Linux-0.11-zhaojiong/Linux内核完全注释%28修正版v3.0%29.pdf)
 - [<font color=Red>调试 Linux 最早期的代码</font>](https://mp.weixin.qq.com/s/cx_vaRTcC29h0pWkJPpqQQ)
 - [Linux-0.11操作系统源码调试-在 Ubuntu22 上](https://blog.csdn.net/chaoguo1234/article/details/128613219)
 - [<font color=Red>https://github.com/yuan-xy/Linux-0.11</font>](https://github.com/yuan-xy/Linux-0.11)
@@ -62,7 +62,6 @@
 
 - [Linux基础- Linux 启动过程](https://www.toutiao.com/article/7271522135665902115/)
 - [你知道Linux的启动过程吗？#程序员##Linux#](https://www.toutiao.com/article/7204305085835346467)
-    ![你知道Linux的启动过程吗？#程序员##Linux#](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/8e2accc090364ccf9792e064817f091e~tplv-obj_1280_1664.gif)
 
 ### grub
 

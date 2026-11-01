@@ -66,7 +66,7 @@ efifb只是所有显卡的linux通用显卡驱动，等到后续显卡厂商编�
 
 对底层接⼝进⾏封装，向上层提供通⽤的API接⼝，主要是对各种IOCTL接⼝进⾏封装。提供了用户空间应用程序与DRM子系统通信的接口，包括打开DRM设备、查询GPU信息、创建DRM缓冲等。
 
-![libdrm](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/libdrm.png)
+![libdrm](libdrm.png)
 
 libdrm.so是通⽤DRM⽀持的IOCTL操作；libdrm_xxxx.so是针对不同的硬件提供的特有IOCTL操作，实现硬件特有的功能。
 
@@ -141,7 +141,7 @@ make -j4
 
 （1）编辑 /etc/default/grub
 
-![grub](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/grub.png)
+![grub](grub.png)
 
 （2）“quiet splash video=LVDS-1:1920×1080"：设置分辨率为1920×1080，假定显示设备标识为LVDS-1。
 
@@ -184,4 +184,4 @@ Mesa 3D库的实现提供了对图形硬件的抽象，使得应用程序可以�
 
 6、modetest找不到设备：【modeset需要将当前图形杀掉】
 
-![modeset](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/modeset.png)
+![modeset](modeset.png)

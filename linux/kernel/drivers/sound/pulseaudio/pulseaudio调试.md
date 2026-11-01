@@ -3,7 +3,7 @@
 ## 源码下载
 
 ```bash
-git clone https://github.com/realwujing/pulseaudio-12.2.58.git
+git clone -b v12.2 https://github.com/pulseaudio/pulseaudio pulseaudio-12.2.58
 ```
 
 ## 安装依赖
@@ -2407,8 +2407,6 @@ fail:
 }
 ```
 
-![snd_pcm_open](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817170922.png)
-
 #### mapping_query_hw_device
 
 ```c
@@ -2935,9 +2933,6 @@ fail:
 
 这个函数中的主要函数`pa_config_parse`解读参见上方。
 
-![20230817180909](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817180909.png)
-![20230817181046](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817181046.png)
-
 ```c
 0x0000fffff24d7c60 in pa_alsa_path_set_new (m=0xaaaaaab2c4b0, direction=PA_ALSA_DIRECTION_INPUT, paths_dir=0x0) at modules/alsa/alsa-mixer.c:3233                                 
 3233                    p = pa_alsa_path_new(m->profile_set, paths_dir, fn, direction);
@@ -3186,10 +3181,6 @@ snd_mixer_t *pa_alsa_open_mixer_for_pcm(snd_pcm_t *pcm, char **ctl_device) {
     return NULL;
 }
 ```
-
-![20230817184204](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817184204.png)
-![20230817184248](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817184248.png)
-![20230817184347](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817184347.png)
 
 ###### prepare_mixer
 
@@ -3520,7 +3511,6 @@ $72 = {
 ```
 
 在vim命令模式下使用`:echo expand('%:p')`显示当前文件的绝对路径：
-![20230817190632](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20230817190632.png)
 
 ```c
 (gdb) fin

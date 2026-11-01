@@ -83,7 +83,7 @@
 - [qt中post和get请求](https://www.jianshu.com/p/777a866a1fed)
 - [Qt Simple Post Request](https://stackoverflow.com/questions/13302236/qt-simple-post-request)
 - [create qt thread event loop](https://stackoverflow.com/questions/15774386/create-qt-thread-event-loop)
-- [post请求不阻塞主线程](https://github.com/realwujing/qt-learning/tree/master/network)
+- [post请求不阻塞主线程](qt-learning/network/)
 
 ## QVariant
 
@@ -189,7 +189,6 @@
 - [<font color=Red>玩转Qt(2)-自制简易好看的日志系统</font>](https://jaredtao.github.io/2019/04/30/%E7%8E%A9%E8%BD%ACQt(2)-%E8%87%AA%E5%88%B6%E7%AE%80%E6%98%93%E5%A5%BD%E7%9C%8B%E7%9A%84%E6%97%A5%E5%BF%97%E7%B3%BB%E7%BB%9F/)
 - [Qt::Qt Log日志模块](https://blog.csdn.net/u011218356/article/details/103344231)
 - [<font color=Red>Qt 自定义日志类</font>](https://www.cnblogs.com/linuxAndMcu/p/14716532.html)
-- <https://github.com/realwujing/qt-log>
 
 - [关于qt：qDebug不显示__FILE __，__ LINE__](https://www.codenong.com/24012108/)
 - [Qt 之 qSetMessagePattern](https://blog.csdn.net/liang19890820/article/details/51839233)

@@ -789,8 +789,6 @@ css_put 于 include/linux/cgroup.h:391
 2533 }
 ```
 
-![__memcg_schedule_kmem_cache_create](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240409164020.png)
-
 ###### memcg_schedule_kmem_cache_create
 
 ```c
@@ -1051,8 +1049,6 @@ linux-4.19.y上`*(s->memcg_params.root_cache->memcg_kset) = 0`， uos-arm-kernel
 kmem_cache通过双向链表管理，kmem_cache父节点的memcg_kset会传导给子节点，故第一个非根节点的kset需要初始化为null。
 
 本次问题虽然修复了，但是感觉uos-arm-kernel-1053-tyy上存在一个CVE。
-
-![修复后跟上游对比](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/企业微信截图_17132357917855.png)
 
 #### systemd
 

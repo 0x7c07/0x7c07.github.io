@@ -6,7 +6,7 @@
 - [Linux内核调试方法](https://blog.csdn.net/u013253075/article/details/120569270)
 - [全面剖析Linux kernel的调试debug技术](https://zhuanlan.zhihu.com/p/543103513)
 - [内核earlyprintk选项](https://blog.csdn.net/sinat_20184565/article/details/111875638)
-- [系统稳定性](?action=getalbum&__biz=MzkwNTI0MzQ4Nw==&scene=1&album_id=2341520520153726976&count=3#wechat_redirect)
+- [系统稳定性](https://mp.weixin.qq.com/mp/appmsgalbum?action=getalbum&__biz=MzkwNTI0MzQ4Nw==&scene=1&album_id=2341520520153726976&count=3#wechat_redirect)
 
 ## fadd2line
 
@@ -88,7 +88,7 @@
 
     这将生成一个包含反汇编代码和源代码行号信息的输出。你可以查看这个输出来分析程序的汇编代码。
 
-  - 注意事项:[cmake-objdump](cpp/cmake-objdump)
+  - 注意事项:[cmake-objdump](../cpp/cmake-objdump/)
     - cmake中使用参数-DCMAKE_BUILD_TYPE=Release编译出来的版本在coredump时生成的dmesg报错中的ip地址与使用-DCMAKE_BUILD_TYPE=Debug编出来的版本再使用objdump反汇编得到的汇编代码对不上。
     - cmkke中-DCMAKE_BUILD_TYPE=Release编译出来的版本在coredump时生成的dmesg报错中的ip地址与在CMakeLists.txt中额外添加set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")编译选项后再使用objdump反汇编得到的汇编代码对应的上。
     - cmake中-DCMAKE_BUILD_TYPE=Debug编译出来的版本后用strip得到的不含调试包的版本在coredump时生成的dmesg报错中的ip地址与使用-DCMAKE_BUILD_TYPE=Debug编出来的版本再使用objdump反汇编得到的汇编代码对应的上。
@@ -276,8 +276,6 @@
     ```bash
     lsusb
     ```
-
-    ![ls -l /dev/ttyUSB0](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20231206170018.png)
 
     ```bash
     echo '067b 23a3' > /sys/bus/usb-serial/drivers/generic/new_id

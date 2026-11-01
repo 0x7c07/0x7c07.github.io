@@ -23,7 +23,7 @@ UBUNTU_CODENAME=xenial
 将内核版本替换成linux主线v4.4:
 
 ```bash
-git clone git@github.com:realwujing/linux.git
+git clone git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 git checkout -b v4.4 v4.4
 sudo apt build-dep linux
 cp /boot/config-4.4.0-161-generic .config
@@ -39,11 +39,17 @@ sudo apt install ../*.deb
 
 方式一
 
-qemu源码位于github上，但是v2.8.1对应的git submodules仓库位于gitlab上，无法下载对应gitmodules源码，故手动替换git submodules仓库为github镜像仓库源，详情见提交：[gitmodules: update git submodule url to github](https://github.com/realwujing/qemu/commit/56fe7ca29adddd876b590e301e62d5b6e4b3a33e)
+qemu 源码位于 GitHub 上，但 v2.8.1 对应的部分 submodule 使用已不可访问的 `git://git.qemu-project.org/` 地址。可以将 `.gitmodules` 中的地址替换为对应的 GitHub 镜像（pixman 使用 freedesktop 的 GitLab 镜像），然后同步并拉取子模块：
 
 ```bash
-git clone git@github.com:realwujing/qemu.git
-git checkout -b v2.8.1-comment v2.8.1-comment
+git clone https://github.com/qemu/qemu.git
+git checkout -b v2.8.1-comment v2.8.1
+
+# 将 qemu-project 的 submodule 地址替换为 GitHub 镜像
+sed -i 's#git://git.qemu-project.org/#https://github.com/qemu/#g' .gitmodules
+sed -i 's#git://anongit.freedesktop.org/pixman#https://gitlab.freedesktop.org/pixman/pixman.git#' .gitmodules
+
+git submodule sync
 git submodule init
 git submodule update --init --recursive
 ```

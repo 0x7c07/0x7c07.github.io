@@ -1,5 +1,5 @@
 # pthread与std::thread
 
-## [pthread](pthread)
+## [pthread](pthread/)
 
-## [std::thread](thread)
+## [std::thread](thread/)

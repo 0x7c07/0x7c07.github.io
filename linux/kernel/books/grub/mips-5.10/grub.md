@@ -215,7 +215,7 @@ EFI（Extensible Firmware Interface）加载器是 UEFI 引导过程中的一个
 
 ## More
 
-- [Linux系统启动管理](https://realwujing.github.io/linux/kernel/kernel/#%E5%90%AF%E5%8A%A8%E7%AE%A1%E7%90%86)
+- [Linux系统启动管理](../../../kernel.md#启动过程)
 
 ### bugs
 

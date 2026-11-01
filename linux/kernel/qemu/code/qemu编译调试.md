@@ -5,7 +5,7 @@
 本次源码解读基于git标签v7.2.4:
 
 ```bash
-git clone git@github.com:realwujing/qemu.git
+git clone https://github.com/qemu/qemu.git
 git checkout -b v7.2.4-comment v7.2.4
 ```
 

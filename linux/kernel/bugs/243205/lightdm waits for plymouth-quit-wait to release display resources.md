@@ -151,28 +151,16 @@ grub中增加参数增加systemd.log_level=debug，将systemd日志级别调整�
 
 plymouth从00:00:01.676跑到00:00:48.567才释放资源，lightdm自然无法送显示。
 
-![plymouth-debug](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/plymouth-debug.png)
+![plymouth-debug](plymouth-debug.png)
 
 ### systemd-update-utmp.service
-
-![systemd-update-utmp.service](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171013.png)
 
 systemd-update-utmp.service 慢了接近4s，这是一个前置服务，会阻塞后面所有流程
 
 ### windbind.service
 
-![windbind.service](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171056.png)
-
-![20240322171122](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171122.png)
-
-![20240322171141](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171141.png)
-
 plymouth会通过一号进程systemd关注windbind.service状态，1070上的windbind.service比1060上的多跑了11.7秒。
 
 ### lightdm.service
-
-![20240322171231](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171231.png)
-
-![20240322171237](https://cdn.jsdelivr.net/gh/realwujing/picture-bed/20240322171237.png)
 
 plymouth会关注lightdm fork出来的进程plymouth quit --retain-splash，1070这里lightdm 慢了接近9.5秒。
