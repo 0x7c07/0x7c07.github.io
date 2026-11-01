@@ -2,7 +2,7 @@
 
 ## 调试内核
 
-- [amd64下基于qemu tap(NAT网络)、debootstrap调试amd64内核、根文件系统](amd64下基于qemu%20tap%28NAT网络%29、debootstrap调试amd64内核、根文件系统.md)
+- [amd64下基于qemu tap(NAT网络)、debootstrap调试amd64内核、根文件系统](amd64下基于qemu%20tap%28NAT网络%29、debootstrap调试amd64内核、根文件系统.html)
 - [amd64下基于qemu用户网络、debootstrap调试amd64内核、根文件系统](amd64下基于qemu用户网络、debootstrap调试amd64内核、根文件系统.md)
 - [amd64下基于qemu调试debian12](amd64下基于qemu调试debian12.md)
 - [amd64下基于qemu调试uos-v20-1054](amd64下基于qemu调试uos-v20-1054.md)

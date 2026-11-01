@@ -2,7 +2,7 @@
 
 本次调试基于linux v5.10-rc7，具体参加下方链接：
 
-- [基于qemu tap(NAT网络)、debootstrap 调试内核、根文件系统](../../qemu/amd64下基于qemu%20tap%28NAT网络%29、debootstrap调试amd64内核、根文件系统.md)
+- [基于qemu tap(NAT网络)、debootstrap 调试内核、根文件系统](../../qemu/amd64下基于qemu%20tap%28NAT网络%29、debootstrap调试amd64内核、根文件系统.html)
 
 ## 断点
 
